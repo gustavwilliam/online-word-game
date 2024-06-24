@@ -5,10 +5,21 @@
       <NavigationButton :icon="ChevronLeftIcon" to="/">Exit to main menu</NavigationButton>
       <NavigationButton :icon="ArrowPathIcon" :onclick="newLetter" v-if="activeGame">New word</NavigationButton>
     </NavigationGroup>
+    <div v-show="activeGame" class="mb-4 w-full">
+      <form @submit.prevent="submitWord" class="flex flex-row gap-2 h-12 w-full">
+        <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          v-model="newWord" placeholder="Enter a word..." autofocus onblur="this.focus()" @keypress="isLetter($event)"
+          class="w-full rounded-lg text-xl px-4 outline-orange-500">
+        <button type="submit"
+          class="bg-orange-500 rounded-lg aspect-square flex items-center justify-center hover:bg-orange-600">
+          <PaperAirplaneIcon class="w-8 h-8 text-white" />
+        </button>
+      </form>
+    </div>
     <div v-if="activeGame">
       <h1 class="uppercase font-[jost] text-5xl mt-10 mb-7">{{ currentWord }}</h1>
-      <GuessedWordsDisplay :guessedWords=guessedWords />
-      <TheInput></TheInput>
+      <GuessedWordsDisplay :guessedWords=guessedWords title="Correct guesses" class="mb-6" />
+      <GuessedWordsDisplay :guessedWords=guessedFails title="Incorrect guesses" />
     </div>
     <div v-else class="w-full h-full">
       <h1 class="text-4xl mt-8 mb-6">Word Game</h1>
@@ -19,22 +30,9 @@
       </button>
     </div>
   </ThePadding>
-  <div v-show="activeGame" class="absolute bottom-0 left-0 mb-4 md:mb-36 lg:mb-56 w-full">
-    <ThePadding class="w-full">
-      <form @submit.prevent="submitWord" class="flex flex-row gap-2 h-12 w-full">
-        <input type="text" v-model="newWord" placeholder="Enter a word..." autofocus onblur="this.focus()"
-          @keypress="isLetter($event)" class="w-full rounded-lg text-xl px-4 outline-orange-500">
-        <button type="submit"
-          class="bg-orange-500 rounded-lg aspect-square flex items-center justify-center hover:bg-orange-600">
-          <PaperAirplaneIcon class="w-8 h-8 text-white" />
-        </button>
-      </form>
-    </ThePadding>
-  </div>
 </template>
 
 <script setup>
-import TheInput from '../components/TheInput.vue';
 import TheScoreboard from '../components/TheScoreboard.vue';
 import ThePadding from '../components/ThePadding.vue';
 import GuessedWordsDisplay from '../components/GuessedWordsDisplay.vue'
@@ -51,6 +49,7 @@ let timeLeft = ref(45);
 let score = ref(0);
 let countdown;
 let guessedWords = reactive([])
+let guessedFails = reactive([])
 let newWord = ref("")
 
 function Counter(array) {
@@ -87,13 +86,16 @@ function wordIsCorrect(word) {
 }
 
 function submitWord() {
+  const theWord = newWord.value.toLowerCase();
   if (!activeGame) return;
-  if (newWord.value.length < 1) return;
+  if (theWord.length < 1) return;
 
-  if (wordIsCorrect(newWord.value)) {
-    addCorrectWord(newWord.value)
+  if (wordIsCorrect(theWord)) {
+    addCorrectWord(theWord)
     newWord.value = "";
   } else {
+    if (guessedFails.includes(theWord)) return;
+    guessedFails.push(theWord);
     hearts.value -= 1;
   }
 }
@@ -108,6 +110,7 @@ function resetGameState() {
   timeLeft.value = 45;
   score.value = 0;
   guessedWords = reactive([])
+  guessedFails = reactive([])
 }
 
 function startGame() {
