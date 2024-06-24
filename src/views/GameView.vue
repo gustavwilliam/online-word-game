@@ -132,7 +132,7 @@ function submitWord() {
 
 function countdownSecond() {
   timeLeft.value -= 1;
-  if (timeLeft <= 0) {
+  if (timeLeft.value <= 0) {
     endGame("Time's up!");
   }
 }
@@ -152,7 +152,6 @@ function pauseGame() {
 }
 
 function startGame() {
-  console.log("Starting game.");
   newGame();
   activeGame.value = true;
   countdown = setInterval(countdownSecond, 1000)
@@ -173,8 +172,8 @@ function newGame() {
 }
 
 function endGame(message) {
-  endMessage.value = message
   pauseGame();
+  endMessage.value = message
   activeGame.value = false;
   showFinish.value = true;
   nextTick();
