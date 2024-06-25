@@ -38,7 +38,7 @@
             <WordsFoundBox title="Possible" @click="showModal" :clickable="true"><span class="text-4xl">
                 {{ possibleSolutions.length }}
               </span></WordsFoundBox>
-            <WordsFoundBox title="Complete" @click="showModal" :clickable="true"><span class="text-4xl">{{
+            <WordsFoundBox title="Complete"><span class="text-4xl">{{
               Math.round(score * 100 / possibleSolutions.length) }}%</span>
             </WordsFoundBox>
           </div>
@@ -48,9 +48,13 @@
         </button>
       </div>
       <div v-else class="w-full h-full mb-7">
+        <img src="/illustrations/text.svg" alt="Search image" class="w-52 float-end hidden md:block" />
         <h1 class="text-4xl mb-4">Word Game</h1>
+        <img src="/illustrations/text.svg" alt="Search image" class="w-44 float-end block md:hidden" />
         <p>When you start the game, you'll be given a random word. Make as many words with the letters of the word as
           possible, before the time runs out! And be careful — make too many mistakes and you lose.</p>
+        <div class="flex justify-center">
+        </div>
         <button @click="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
           Start game
         </button>
@@ -121,6 +125,7 @@ function addCorrectWord(word) {
 }
 
 function wordIsCorrect(word) {
+  word = word.replaceAll(/\s+/g, '')
   const currentWordC = Counter(currentWord.value.split(""));
   const guessWordC = Counter(word.split(""));
 
