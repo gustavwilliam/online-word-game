@@ -26,13 +26,15 @@
       <div v-else-if="showFinish">
         <h1 class="text-4xl font-bold mb-2">{{ endMessage }}</h1>
         <p>Well done! Here are your stats for this game:</p>
-        <div class="mt-8 flex w-full gap-2">
-          <WordsFoundBox title="Found"><span class="text-4xl">{{ score }}</span></WordsFoundBox>
-          <WordsFoundBox title="Possible"><span class="text-4xl">{{ possibleSolutions.length }}</span>
-          </WordsFoundBox>
-          <!-- <div class="bg-white grow uppercase">
-                Show solutions
-              </div> -->
+        <div class="mt-8 flex gap-2 flex-col">
+          <WordsFoundBox title="Word" class="w-full"><span class="text-4xl font-[jost] uppercase">{{ currentWord
+              }}</span></WordsFoundBox>
+          <div class="flex w-full gap-2">
+            <WordsFoundBox title="Found"><span class="text-4xl">{{ score }}</span></WordsFoundBox>
+            <WordsFoundBox title="Possible"><span class="text-4xl">
+                {{ possibleSolutions.length }}
+              </span></WordsFoundBox>
+          </div>
         </div>
         <button :onclick="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
           Play again
@@ -64,7 +66,7 @@ let currentWord = ref("")
 let wordList;
 let activeGame = ref(false);
 let hearts = ref(5);
-let timeLeft = ref(45);
+let timeLeft = ref(120);
 let score = ref(0);
 let countdown;
 let guessedWords = reactive([])
@@ -138,8 +140,9 @@ function countdownSecond() {
 }
 
 function resetGameState() {
+  pauseGame();
   hearts.value = 5;
-  timeLeft.value = 45;
+  timeLeft.value = 120;
   score.value = 0;
   guessedWords = reactive([]);
   guessedFails = reactive([]);
