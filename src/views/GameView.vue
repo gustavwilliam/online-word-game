@@ -1,9 +1,12 @@
 <template>
-  <TheScoreboard :hearts="hearts" :timeLeft="timeLeft" :score="score"></TheScoreboard>
+  <TheScoreboard :hearts="hearts" :timeLeft="timeLeft" :score="score" :totalCorrectWords="possibleSolutions.length">
+  </TheScoreboard>
   <ThePadding>
     <NavigationGroup>
       <NavigationButton :icon="ChevronLeftIcon" to="/">Exit to main menu</NavigationButton>
-      <NavigationButton :icon="ArrowPathIcon" :onclick="newLetter" v-if="activeGame || showFinish">New word
+      <NavigationButton :icon="ArrowPathIcon" @click="newLetter" v-if="activeGame || showFinish">New word
+      </NavigationButton>
+      <NavigationButton :icon="ChevronDoubleRightIcon" @click="endGame('Game finished!')" v-if="activeGame">Finish early
       </NavigationButton>
     </NavigationGroup>
     <div v-show="activeGame" class="mb-4 w-full">
@@ -35,9 +38,12 @@
             <WordsFoundBox title="Possible" @click="showModal" :clickable="true"><span class="text-4xl">
                 {{ possibleSolutions.length }}
               </span></WordsFoundBox>
+            <WordsFoundBox title="Complete" @click="showModal" :clickable="true"><span class="text-4xl">{{
+              Math.round(score * 100 / possibleSolutions.length) }}%</span>
+            </WordsFoundBox>
           </div>
         </div>
-        <button :onclick="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
+        <button @click="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
           Play again
         </button>
       </div>
@@ -45,7 +51,7 @@
         <h1 class="text-4xl mb-4">Word Game</h1>
         <p>When you start the game, you'll be given a random word. Make as many words with the letters of the word as
           possible, before the time runs out! And be careful — make too many mistakes and you lose.</p>
-        <button :onclick="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
+        <button @click="startGame" class="bg-orange-500 w-full py-3 rounded-lg mt-4 text-lg text-white">
           Start game
         </button>
       </div>
@@ -63,7 +69,7 @@ import TheScoreboard from '../components/TheScoreboard.vue';
 import ThePadding from '../components/ThePadding.vue';
 import WordsFoundBox from '../components/WordsFoundBox.vue'
 import GuessedWordsDisplay from '../components/GuessedWordsDisplay.vue'
-import { ChevronLeftIcon, ArrowPathIcon, PaperAirplaneIcon } from '@heroicons/vue/20/solid';
+import { ChevronLeftIcon, ArrowPathIcon, PaperAirplaneIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
 import NavigationGroup from '../components/NavigationGroup.vue';
 import NavigationButton from '../components/NavigationButton.vue'
 import TheModal from '../components/TheModal.vue';
@@ -163,6 +169,7 @@ function resetGameState() {
   guessedWords = reactive([]);
   guessedFails = reactive([]);
   possibleSolutions = reactive([]);
+  showFinish.value = false;
   newWord.value = "";
 }
 
@@ -191,6 +198,8 @@ function newGame() {
 }
 
 function endGame(message) {
+  console.log("ending game")
+  console.log(message)
   pauseGame();
   endMessage.value = message
   activeGame.value = false;
@@ -213,6 +222,6 @@ async function setupGame() {
 }
 
 onMounted(() => {
-  setupGame()
+  setupGame();
 })
 </script>
