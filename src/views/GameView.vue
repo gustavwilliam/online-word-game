@@ -30,8 +30,9 @@
           <WordsFoundBox title="Word" class="w-full"><span class="text-4xl font-[jost] uppercase">{{ currentWord
               }}</span></WordsFoundBox>
           <div class="flex w-full gap-2">
-            <WordsFoundBox title="Found"><span class="text-4xl">{{ score }}</span></WordsFoundBox>
-            <WordsFoundBox title="Possible"><span class="text-4xl">
+            <WordsFoundBox title="Found" @click="showModal" :clickable="true"><span class="text-4xl">{{ score }}</span>
+            </WordsFoundBox>
+            <WordsFoundBox title="Possible" @click="showModal" :clickable="true"><span class="text-4xl">
                 {{ possibleSolutions.length }}
               </span></WordsFoundBox>
           </div>
@@ -50,6 +51,11 @@
       </div>
     </div>
   </ThePadding>
+  <TheModal v-show="isModalVisible" @close="closeModal" :title="`Combinations for ${currentWord}`">
+    <GuessedWordsDisplay :guessedWords="possibleSolutions" :normalOrder="true" :actualGuesses="guessedWords"
+      :isDone="true">
+    </GuessedWordsDisplay>
+  </TheModal>
 </template>
 
 <script setup>
@@ -60,6 +66,7 @@ import GuessedWordsDisplay from '../components/GuessedWordsDisplay.vue'
 import { ChevronLeftIcon, ArrowPathIcon, PaperAirplaneIcon } from '@heroicons/vue/20/solid';
 import NavigationGroup from '../components/NavigationGroup.vue';
 import NavigationButton from '../components/NavigationButton.vue'
+import TheModal from '../components/TheModal.vue';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 
 let currentWord = ref("")
@@ -75,6 +82,15 @@ let newWord = ref("")
 let showFinish = ref(false);
 let possibleSolutions = reactive([])
 let endMessage = ref("Time's up!");
+let isModalVisible = ref(false);
+
+function showModal() {
+  isModalVisible.value = true;
+}
+
+function closeModal() {
+  isModalVisible.value = false;
+}
 
 function Counter(array) {
   var count = {};
