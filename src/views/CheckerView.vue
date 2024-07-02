@@ -58,7 +58,7 @@ function isLetter(e) {
 }
 
 function wordIsCorrect(word) {
-  word = word.replaceAll(/\s+/g, '')
+  word = word.replaceAll(/\s+/g, '').toLowerCase();
   const currentWordC = Counter(currentWord.value.split(""));
   const guessWordC = Counter(word.split(""));
 
@@ -71,7 +71,7 @@ function wordIsCorrect(word) {
 
 function Counter(array) {
   var count = {};
-  array.forEach(val => count[val] = (count[val] || 0) + 1);
+  array.forEach(val => count[val.toLowerCase()] = (count[val.toLowerCase()] || 0) + 1);
   return count;
 }
 
